@@ -2,30 +2,29 @@ import cv2
 import numpy as np
 import requests
 
-#Helper functions and classes
-class Vertex:
-    def __init__(self,x_coord,y_coord):
-        self.x=x_coord
-        self.y=y_coord
-        self.d=float('inf') #distance from source
+class MazePoint:
+    def __init__(self,x_,y_):
+        self.x=x_
+        self.y=y_
+        self.d=float('inf') 
         self.parent_x=None
         self.parent_y=None
-        self.processed=False
-        self.index_in_queue=None
+        self.index=None
+        self.visited=False
 
-#Return neighbor directly above, below, right, and left
-def get_neighbors(mat,r,c):
+
+def neighbors(mat,row,col):
     shape=mat.shape
     neighbors=[]
-    #ensure neighbors are within image boundaries
-    if r > 0 and not mat[r-1][c].processed:
-         neighbors.append(mat[r-1][c])
-    if r < shape[0] - 1 and not mat[r+1][c].processed:
-            neighbors.append(mat[r+1][c])
-    if c > 0 and not mat[r][c-1].processed:
-        neighbors.append(mat[r][c-1])
-    if c < shape[1] - 1 and not mat[r][c+1].processed:
-            neighbors.append(mat[r][c+1])
+
+    if row > 0 and not mat[row-1][col].visited:
+         neighbors.append(mat[row-1][col])
+    if row < shape[0] - 1 and not mat[row+1][col].visited:
+            neighbors.append(mat[row+1][col])
+    if col > 0 and not mat[row][col-1].visited:
+        neighbors.append(mat[row][col-1])
+    if col < shape[1] - 1 and not mat[row][col+1].visited:
+            neighbors.append(mat[row][col+1])
     return neighbors
 
 def bubble_up(queue, index):
@@ -36,7 +35,7 @@ def bubble_up(queue, index):
             queue[index], queue[p_index]=queue[p_index], queue[index]
             queue[index].index_in_queue=index
             queue[p_index].index_in_queue=p_index
-            quque = bubble_up(queue, p_index)
+            queue = bubble_up(queue, p_index)
     return queue
     
 def bubble_down(queue, index):
@@ -45,7 +44,7 @@ def bubble_down(queue, index):
     rc_index=lc_index+1
     if lc_index >= length:
         return queue
-    if lc_index < length and rc_index >= length: #just left child
+    if lc_index < length and rc_index >= length: 
         if queue[index].d > queue[lc_index].d:
             queue[index], queue[lc_index]=queue[lc_index], queue[index]
             queue[index].index_in_queue=index
@@ -65,15 +64,6 @@ def bubble_down(queue, index):
 def get_distance(img,u,v):
     return 0.1 + (float(img[v][0])-float(img[u][0]))**2+(float(img[v][1])-float(img[u][1]))**2+(float(img[v][2])-float(img[u][2]))**2
 
-def drawPath(img,path, thickness=2):
-    '''path is a list of (x,y) tuples'''
-    x0,y0=path[0]
-    
-    for vertex in path[1:]:
-        x1,y1=vertex
-        cv2.line(img,(x0,y0),(x1,y1),(255,0,0),thickness)
-        x0,y0=vertex
-    cv2.imshow("",img)
 
 def find_shortest_path(img,src,dst):
     pq=[] #min-heap priority queue
@@ -85,7 +75,7 @@ def find_shortest_path(img,src,dst):
     matrix = np.full((imagerows, imagecols), None) #access by matrix[row][col]
     for r in range(imagerows):
         for c in range(imagecols):
-            matrix[r][c]=Vertex(c,r)
+            matrix[r][c]=MazePoint(c,r)
             matrix[r][c].index_in_queue=len(pq)
             pq.append(matrix[r][c])
     matrix[source_y][source_x].d=0
@@ -97,8 +87,8 @@ def find_shortest_path(img,src,dst):
         pq[0].index_in_queue=0
         pq.pop()
         pq=bubble_down(pq,0)
-        neighbors = get_neighbors(matrix,u.y,u.x)
-        for v in neighbors:
+        neigh = neighbors(matrix,u.y,u.x)
+        for v in neigh:
             dist=get_distance(img,(u.y,u.x),(v.y,v.x))
             if u.d + dist < v.d:
                 v.d = u.d+dist
@@ -124,9 +114,4 @@ if __name__ == "__main__":
     image = np.asarray(bytearray(resp.read()), dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     path = find_shortest_path(image,(0,1),(image.shape[1]-1,image.shape[0]-2))
-    print(len(path))
-    # drawPath(image,path,thickness=1)
-    # while True:
-    #     key = cv2.waitKey(0)
-    #     if key == ord('q'):
-    #         break
+    print(len(path) - 2)
