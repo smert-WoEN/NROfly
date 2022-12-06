@@ -47,18 +47,18 @@ def find_opt_dist(img,start,end):
                 dist_mat[v[0], v[1]] = dist_mat[cell[0],cell[1]] + diff(img,cell,v)
         visited_mat[cell[0],cell[1]] = True
         if cell[0] == end_x and cell[1] == end_y:
-            print(image[visited_mat & (image[:,:,0] == 255)].shape)
+            # print(image[visited_mat & (image[:,:,0] == 255)].shape)
             # for i in range(10):
             #     print(dist_mat[i,:10])
             #     print()
             # print(get_neighbours(image,visited_mat,cell))
-            non_vis = np.nonzero(visited_mat)
-            for node_id in range(non_vis[0].shape[0]):
-                image[non_vis[0][node_id],non_vis[1][node_id]][0] = 255
-                image[non_vis[0][node_id],non_vis[1][node_id]][1] = 0
-                image[non_vis[0][node_id],non_vis[1][node_id]][2] = 0
+            # non_vis = np.nonzero(visited_mat)
+            # for node_id in range(non_vis[0].shape[0]):
+            #     image[non_vis[0][node_id],non_vis[1][node_id]][0] = 255
+            #     image[non_vis[0][node_id],non_vis[1][node_id]][1] = 0
+            #     image[non_vis[0][node_id],non_vis[1][node_id]][2] = 0
 
-            cv2.imshow("",img)
+            # cv2.imshow("",img)
             while True:
                 key = cv2.waitKey(0)
                 if key == ord('q'):
