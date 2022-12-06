@@ -41,11 +41,22 @@ def main():
 
     rects = detect_countours(img_threshold)
     
-
+    digits = []
     for rect in rects:
-        cv2.rectangle(image, (rect[0], rect[1]), (rect[0] + rect[2], rect[1] + rect[3]), (0, 255, 0), 3)
-        show(image) 
+        x, y, w, h = rect[0], rect[1], rect[2], rect[3]
+        digit = image[y: y + h, x: x + w]
+        digits.append([x, digit])
+
+        image_copy = image.copy()
+        cv2.rectangle(image_copy, (x, y), (x + w, y + h), (0, 255, 0), 3)
+        show(image_copy) 
     
+    # Так как opencv определяет контуры одним известным местом, цифры он вырезает не по порядку. Нужно сортировать по x
+    digits.sort()
+    # После сортировки кооридната x уже не нужна
+    digits = [digits[i][1] for i in range(len(digits))] 
+    show(digits[0])
+
     cv2.waitKey(0)
 
 
