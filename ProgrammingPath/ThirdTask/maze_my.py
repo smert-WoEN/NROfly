@@ -59,10 +59,10 @@ def find_opt_dist(img,start,end):
             #     image[non_vis[0][node_id],non_vis[1][node_id]][2] = 0
 
             # cv2.imshow("",img)
-            while True:
-                key = cv2.waitKey(0)
-                if key == ord('q'):
-                    break
+            # while True:
+            #     key = cv2.waitKey(0)
+            #     if key == ord('q'):
+            #         break
             return dist_mat[cell[0],cell[1]]
     
     return dist_mat[end_x,end_y]
