@@ -30,7 +30,7 @@ def detect_countours(img_threshold):
 
 
 def main():
-    image = read_image("https://stepik.org/media/attachments/course/128568/1234567890.png")
+    image = read_image("https://stepik.org/media/attachments/course/128568/1234.png")
     show(image)
 
     img_gray_blur = gray_blur(image)
@@ -56,6 +56,8 @@ def main():
     # После сортировки кооридната x уже не нужна
     digits = [digits[i][1] for i in range(len(digits))] 
     show(digits[0])
+
+    cv2.imwrite("dot.png", digits[2])
 
     cv2.waitKey(0)
 
