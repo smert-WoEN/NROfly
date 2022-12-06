@@ -29,8 +29,9 @@ def detect_countours(img_threshold):
     return rects
 
 
+
 def main():
-    image = read_image("https://stepik.org/media/attachments/course/128568/1234.png")
+    image = read_image("https://stepik.org/media/attachments/course/128568/1234567890.png")
     show(image)
 
     img_gray_blur = gray_blur(image)
@@ -49,15 +50,14 @@ def main():
 
         image_copy = image.copy()
         cv2.rectangle(image_copy, (x, y), (x + w, y + h), (0, 255, 0), 3)
-        show(image_copy) 
+        #show(image_copy) 
     
     # Так как opencv определяет контуры одним известным местом, цифры он вырезает не по порядку. Нужно сортировать по x
     digits.sort()
     # После сортировки кооридната x уже не нужна
-    digits = [digits[i][1] for i in range(len(digits))] 
-    show(digits[0])
+    digits = [digits[i][1]/255.0 for i in range(len(digits))] 
+    #show(digits[0])
 
-    cv2.imwrite("dot.png", digits[2])
 
     cv2.waitKey(0)
 
