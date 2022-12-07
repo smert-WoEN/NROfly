@@ -1,21 +1,15 @@
 import math
-
 import networkx as nx
 import sympy
-import itertools
-
-from matplotlib import pyplot as plt
 
 
-def getDistance(points):
-    return math.sqrt((points[0][0] - points[1][0]) ** 2 + (points[0][1] - points[1][1]) ** 2)
+def getDistance(points1):
+    return math.sqrt((points1[0][0] - points1[1][0]) ** 2 + (points1[0][1] - points1[1][1]) ** 2)
 
 
-def inspect(barrier, segment):
-    a = barrier.intersection(segment)
-    if len(a) == 2 or (len(a) == 2 and (barrier.encloses(segment.p1) or barrier.encloses(segment.p2))):
-        return True
-    return False
+def inspect(barrier1, segment1):
+    a = barrier1.intersection(segment1)
+    return len(a) == 2 or (len(a) == 2 and (barrier1.encloses(segment1.p1) or barrier1.encloses(segment1.p2)))
 
 
 dataset = [[int(x) for x in input().split()] for i in range(int(input()))]
