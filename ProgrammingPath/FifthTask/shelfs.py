@@ -3,7 +3,7 @@ import numpy as np
 import requests
 
 
-url = "https://stepik.org/media/attachments/course/128568/shelfQR0.png"
+url = input() # "https://stepik.org/media/attachments/course/128568/shelfQR0.png"
 resp = requests.get(url, stream=True).raw
 image = np.asarray(bytearray(resp.read()), dtype=np.uint8)
 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
@@ -63,11 +63,12 @@ for shelf in range(1,num_rows):
         
         qr_frame = image[x_s[(num_rows-shelf-1)*num_cols]+5:x_s[(num_rows-shelf)*num_cols],y_s[(ser-1)*num_rows]+6:y_s[(ser)*num_rows]]
         # print(qr_frame.shape)
-        retval, decoded_info, points, straight_qrcode = qcd.detectAndDecodeMulti(qr_frame)
+        decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+        # print(points,decoded_info)
         print(f"{shelf}-я полка {ser}-й ряд. ",end="")
-        if retval:
-            decoded_info = decoded_info[0].split("; ")
-            print(decoded_info)
+        if points is not None:
+            decoded_info = decoded_info.split("; ")
+            # print(decoded_info)
             print(decoded_info[0],end=". ")
             if shelf == int(decoded_info[1]) and ser == int(decoded_info[2]):
                 print("Расположение верное.")
@@ -76,10 +77,10 @@ for shelf in range(1,num_rows):
         else:
             print("Товар отсутствует.")
         
-        cv2.imshow("",qr_frame)
-        while True:
-            key = cv2.waitKey(0)
-            if key == ord('q'):
-                break
+        # cv2.imshow("",qr_frame)
+        # while True:
+        #     key = cv2.waitKey(0)
+        #     if key == ord('q'):
+        #         break
 
 
