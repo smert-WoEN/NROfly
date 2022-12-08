@@ -3,7 +3,7 @@ import numpy as np
 import requests
 
 
-url = input() # "https://stepik.org/media/attachments/course/128568/shelfQR0.png"
+url =  "https://stepik.org/media/attachments/course/128568/shelfQR1.png"
 resp = requests.get(url, stream=True).raw
 image = np.asarray(bytearray(resp.read()), dtype=np.uint8)
 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
@@ -62,9 +62,30 @@ for shelf in range(1,num_rows):
     for ser in range(1,num_cols):
         
         qr_frame = image[x_s[(num_rows-shelf-1)*num_cols]+5:x_s[(num_rows-shelf)*num_cols],y_s[(ser-1)*num_rows]+6:y_s[(ser)*num_rows]]
-        # print(qr_frame.shape)
         decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
-        # print(points,decoded_info)
+        if points is None:
+            array = np.full((len(qr_frame) * 2, len(qr_frame[0]) * 2, 3), 255, dtype=np.uint8)
+            for i in range(len(qr_frame)):
+                for j in range(len(qr_frame[0])):
+                    array[i + len(qr_frame) // 2][j + len(qr_frame[0]) // 2] = qr_frame[i][j]
+            qr_frame = array
+        decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+        if points is None:
+            array = np.full((len(qr_frame) * 3, len(qr_frame[0]) * 3, 3), 255, dtype=np.uint8)
+            for i in range(len(qr_frame)):
+                for j in range(len(qr_frame[0])):
+                    array[i + len(qr_frame)][j + len(qr_frame[0])] = qr_frame[i][j]
+            qr_frame = array
+        # decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+        # if points is None:
+        #     array = np.full((len(qr_frame) * 5, len(qr_frame[0]) * 5, 3), 255, dtype=np.uint8)
+        #     for i in range(len(qr_frame)):
+        #         for j in range(len(qr_frame[0])):
+        #             array[i + len(qr_frame) // 2][j + len(qr_frame[0]) // 2] = qr_frame[i][j]
+        #     qr_frame = array
+        #print(qr_frame.shape)
+        decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+        #print(points,decoded_info)
         print(f"{shelf}-я полка {ser}-й ряд. ",end="")
         if points is not None:
             decoded_info = decoded_info.split("; ")
