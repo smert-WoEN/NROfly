@@ -3,7 +3,7 @@ import numpy as np
 import requests
 
 
-url =  "https://stepik.org/media/attachments/course/128568/shelfQR1.png"
+url =  "https://stepik.org/media/attachments/course/128568/shelfQR0.png"
 resp = requests.get(url, stream=True).raw
 image = np.asarray(bytearray(resp.read()), dtype=np.uint8)
 image = cv2.imdecode(image, cv2.IMREAD_COLOR)
@@ -62,6 +62,9 @@ for shelf in range(1,num_rows):
     for ser in range(1,num_cols):
         
         qr_frame = image[x_s[(num_rows-shelf-1)*num_cols]+5:x_s[(num_rows-shelf)*num_cols],y_s[(ser-1)*num_rows]+6:y_s[(ser)*num_rows]]
+        qr_frame_base = qr_frame.copy()
+        qcd.setEpsY(0.1)
+        qcd.setEpsX(0.2)
         decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
         if points is None:
             array = np.full((len(qr_frame) * 2, len(qr_frame[0]) * 2, 3), 255, dtype=np.uint8)
@@ -69,23 +72,33 @@ for shelf in range(1,num_rows):
                 for j in range(len(qr_frame[0])):
                     array[i + len(qr_frame) // 2][j + len(qr_frame[0]) // 2] = qr_frame[i][j]
             qr_frame = array
-        decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+            decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
         if points is None:
             array = np.full((len(qr_frame) * 3, len(qr_frame[0]) * 3, 3), 255, dtype=np.uint8)
             for i in range(len(qr_frame)):
                 for j in range(len(qr_frame[0])):
                     array[i + len(qr_frame)][j + len(qr_frame[0])] = qr_frame[i][j]
             qr_frame = array
-        # decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
-        # if points is None:
-        #     array = np.full((len(qr_frame) * 5, len(qr_frame[0]) * 5, 3), 255, dtype=np.uint8)
-        #     for i in range(len(qr_frame)):
-        #         for j in range(len(qr_frame[0])):
-        #             array[i + len(qr_frame) // 2][j + len(qr_frame[0]) // 2] = qr_frame[i][j]
-        #     qr_frame = array
-        #print(qr_frame.shape)
-        decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
-        #print(points,decoded_info)
+            decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+        if points is None:
+            qr_frame = qr_frame_base.copy()
+            blur_qr = cv2.GaussianBlur(qr_frame, (25, 25), cv2.BORDER_DEFAULT)
+            hsv = cv2.cvtColor(blur_qr, cv2.COLOR_BGR2HSV)
+            hsvMin = np.array((0, 0, 255), np.uint8)
+            hsvMax = np.array((255, 255, 255), np.uint8)
+            # накладываем фильтр на кадр в модели HSV
+            thresh = cv2.inRange(hsv, hsvMin, hsvMax)
+            _, counter, _ = cv2.findContours(thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_NONE)
+            #print(counter)
+            if len(counter) > 1 and points is None:
+                x, y, w, h = cv2.boundingRect(counter[1])
+                qcd.setEpsY(0.2)
+                qcd.setEpsX(0.2)
+                decoded_info, points, _ = qcd.detectAndDecode(qr_frame_base)
+        #decoded_info, points, _ = qcd.detectAndDecode(qr_frame)
+
+
+        #print(decoded_info, points)
         print(f"{shelf}-я полка {ser}-й ряд. ",end="")
         if points is not None:
             decoded_info = decoded_info.split("; ")
