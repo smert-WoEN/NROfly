@@ -64,11 +64,23 @@ class Labyrinth:
 
         if not forward:
             if right:
-                next_state = State(current_state)
+                if current_state.angle == 0:
+                    next_state = State(current_state.pos.y + 1,
+                                       current_state.angle)
+                elif current_state.angle == 180:
+                    next_state = State(current_state.pos.y - 1,
+                                       current_state.angle)
+                elif current_state.angle == 90:
+                    next_state = State(current_state.pos.x + 1,
+                                       current_state.angle)
+                elif current_state.angle == 270:
+                    next_state = State(current_state.pos.x - 1,
+                                       current_state.angle)
+            else:
+                next_state = State(current_state.pos,
+                                   (current_state.angle + 90) % 360)
         else:
             next_state = State(current_state.pos,
                                (current_state.angle - 90) % 360)
 
-
-    def bypass_labyrinth(self):
-        pass
+        return next_state
