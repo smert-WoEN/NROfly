@@ -52,7 +52,7 @@ class Labyrinth:
     def add_cell(self, cell):
         self.cells.append(cell)
 
-    def next_move_right_hand(self, current_state, forward, right):
+    def next_move_right_hand(self, forward, right):
         """
 
         :param current_state: x,y,angle
@@ -64,23 +64,9 @@ class Labyrinth:
 
         if not forward:
             if right:
-                if current_state.angle == 0:
-                    next_state = State(current_state.pos.y + 1,
-                                       current_state.angle)
-                elif current_state.angle == 180:
-                    next_state = State(current_state.pos.y - 1,
-                                       current_state.angle)
-                elif current_state.angle == 90:
-                    next_state = State(current_state.pos.x + 1,
-                                       current_state.angle)
-                elif current_state.angle == 270:
-                    next_state = State(current_state.pos.x - 1,
-                                       current_state.angle)
+                return "move forward"
             else:
-                next_state = State(current_state.pos,
-                                   (current_state.angle + 90) % 360)
+                return "rotate right"
         else:
-            next_state = State(current_state.pos,
-                               (current_state.angle - 90) % 360)
-
-        return next_state
+            return "rotate left"
+        
