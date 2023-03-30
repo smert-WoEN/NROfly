@@ -22,7 +22,7 @@ land = rospy.ServiceProxy('land', Trigger)
 set_effect = rospy.ServiceProxy("led/set_effect", srv.SetLEDEffect)
 
 
-def navigate_wait(x=0, y=0, z=0, yaw=float('nan'), set_angle=0, speed=1, frame_id='', auto_arm=False, tolerance=0.2, yaw_rate=0.0, tolerance_angle = math.radians(.5)):
+def navigate_wait(x=0, y=0, z=0, yaw=float('nan'), set_angle=0, speed=1, frame_id='', auto_arm=False, tolerance=0.1, yaw_rate=0.0, tolerance_angle = math.radians(5.0)):
     if (set_angle < 0):
         yaw_rate *= -1
     navigate(x=x, y=y, z=z, yaw=yaw, speed=speed, frame_id=frame_id, auto_arm=auto_arm, yaw_rate=yaw_rate)
@@ -58,19 +58,19 @@ def get_left_range():
 
 
 def check_forward_wall(dist=1.2):
-    return get_forward_range < dist
+    return get_forward_range() < dist
 
 
 def check_right_wall(dist=1.2):
-    return get_right_range < dist
+    return get_right_range() < dist
 
 
 def check_left_wall(dist=1.2):
-    return get_left_range < dist
+    return get_left_range() < dist
 
 
 
-def takeoff(z=1.05):
+def takeoff(z=1.1):
     navigate_wait(x=0, y=0, z=0, frame_id='body', auto_arm=True, speed=0.2)
     set_effect(effect='blink', r=0, g=0, b=255)
     navigate_wait(x=0, y=0, z=z, frame_id='body', speed=0.2)
@@ -87,20 +87,20 @@ def move_forward(dist):
 takeoff()
 import time
 start_time = time.time()
-while time.time() - start_time > 240:
-    if (not check_right_wall):
-        rotate(-90)
+print('no')
+while time.time() - start_time < 240:
+    print('yes')
+    if not check_right_wall():
+        rotate(-90.0)
         move_forward(1.5)
-    elif(not check_forward_wall):
+    elif not check_forward_wall():
         move_forward(1.5)
-    elif not check_left_wall:
-        rotate(90)
+    elif not check_left_wall():
+        rotate(90.0)
         move_forward(1.5)
     else:
-        rotate(180)
+        rotate(180.0)
         move_forward(1.5)
-
-
 
 
 landing()
