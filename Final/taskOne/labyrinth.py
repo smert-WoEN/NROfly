@@ -67,7 +67,7 @@ class Labyrinth:
                 next_state = State(current_state)
         else:
             next_state = State(current_state.pos,
-                               current_state - 90)
+                               (current_state.angle - 90) % 360)
 
 
     def bypass_labyrinth(self):
