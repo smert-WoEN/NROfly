@@ -88,7 +88,7 @@ takeoff()
 import time
 start_time = time.time()
 print('no')
-while time.time() - start_time < 240:
+while time.time() - start_time < 300:
     print('yes')
     if not check_right_wall():
         rotate(-90.0)
