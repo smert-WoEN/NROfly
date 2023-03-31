@@ -46,30 +46,28 @@ class Labyrinth:
 
 
 def print_maze_map(maze_map):
-    maze_size_x = len(maze_map)
-    maze_size_y = len(maze_map[0])
-    print(f"maze_size_x: {maze_size_x} \nmaze_size_y: {maze_size_x}\n\n")
+    # maze_size_x = len(maze_map)
+    # maze_size_y = len(maze_map[0])
+    # print(f"maze_size_x: {maze_size_x} \nmaze_size_y: {maze_size_x}\n\n")
 
-    i = 0
     for i, row in enumerate(maze_map, 0):
         for j, cell in enumerate(row, 0):
             messages = []
-            if not cell.forward:
-                messages.append(f"{j + i*4 + 1}-{j + (i+1)*4 + 1}")
-            if not cell.right:
-                messages.append(f"{j + i*4 + 1}-{j + 1 + i*4 + 1}")
             if not cell.back:
                 messages.append(f"{j + i*4 + 1}-{j + (i-1)*4 + 1}")
             if not cell.left:
                 messages.append(f"{j + i*4 + 1}-{j - 1 + i*4 + 1}")
-
-            for i, message in enumerate(messages, 0):
-                if i != len(messages) - 1:
+            if not cell.right:
+                messages.append(f"{j + i*4 + 1}-{j + 1 + i*4 + 1}")
+            if not cell.forward:
+                messages.append(f"{j + i*4 + 1}-{j + (i+1)*4 + 1}")
+            for k, message in enumerate(messages, 0):
+                if k != len(messages) - 1:
                     print(message, end="; ")
                 else:
                     print(message, end="")
 
-            print("\n")
+            print("")
 
 
 if __name__ == "__main__":
