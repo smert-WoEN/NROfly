@@ -51,7 +51,7 @@ def print_maze_map(maze_map):
     print(f"maze_size_x: {maze_size_x} \nmaze_size_y: {maze_size_x}\n\n")
 
     i = 0
-    for row in maze_map:
+    for i, row in enumerate(maze_map, 0):
         for j, cell in enumerate(row, 0):
             messages = []
             if not cell.forward:
@@ -71,7 +71,6 @@ def print_maze_map(maze_map):
 
             print("\n")
 
-        i += 1
 
 if __name__ == "__main__":
     maze_map = [
