@@ -92,47 +92,26 @@ def move(dir, x_, y_, z_, yaw_):
     return x_, y_, z_, yaw_
 
 
-x, y , z, yaw = 0, 0 ,1.1, 0
+x, y, z, yaw = 0, 0, 1.1, 0
 direction = 4 # 0 - increase x, 1 - decrease y, 2 - decrease x, 3 - increase y, 4 - increase z
 navigate_wait(x=0, y=0, z=0,yaw=yaw, frame_id='body', auto_arm=True, speed=0.1)
-move(direction,x,y,z,yaw)
+move(direction, x, y, z, yaw)
 import time
 start_time = time.time()
 direction = 0
 while time.time() - start_time < 300:
     if not check_right_wall():
-        if direction == 0:
-            direction = 1
-        elif direction == 1:
-            direction = 2
-        elif direction == 2:
-            direction = 3
-        elif direction == 3:
-            direction = 0
+        direction = (direction + 1) % 4
         print("RIGHT")
     elif not check_forward_wall():
         print("STRAIGHT")
     elif not check_left_wall():
-        if direction == 0:
-            direction = 3
-        elif direction == 1:
-            direction = 0
-        elif direction == 2:
-            direction = 1
-        elif direction == 3:
-            direction = 2
+        direction = (direction - 1) % 4
         print("LEFT")
     else:
-        if direction == 0:
-            direction = 2
-        elif direction == 1:
-            direction = 3
-        elif direction == 2:
-            direction = 0
-        elif direction == 3:
-            direction = 1
+        direction = (direction + 2) % 4
         print("DOWN")
-    x, y, z, yaw = move(direction, x ,y, z,yaw)
+    x, y, z, yaw = move(direction, x, y, z, yaw)
     
 
 
