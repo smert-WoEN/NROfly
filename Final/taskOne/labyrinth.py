@@ -20,25 +20,17 @@ class State:
         self.angle = angle
 
 class Cell:
-    def __init__(self, point, sides=None):
+    def __init__(self, sides=None):
         """
-
-        :param point: position af a cell
         :param sides: forward, back, left, right, True if a wall exists
         """
-        self.point = point
 
         self.forward = sides[0]
-        self.back = sides[1]
-        self.left = sides[2]
-        self.right = sides[3]
+        self.right = sides[1]
+        self.back = sides[2]
+        self.left = sides[3]
 
-        self.sides = [
-            self.forward,
-            self.back,
-            self.left,
-            self.right
-        ]
+        self.sides = sides
 
 
 class Labyrinth:
@@ -52,21 +44,41 @@ class Labyrinth:
     def add_cell(self, cell):
         self.cells.append(cell)
 
-    def next_move_right_hand(self, forward, right):
-        """
 
-        :param current_state: x,y,angle
-        :param forward: True if a wall exists
-        :param right: True if a wall exists
+def print_maze_map(maze_map):
+    maze_size_x = len(maze_map)
+    maze_size_y = len(maze_map[0])
+    print(f"maze_size_x: {maze_size_x} \nmaze_size_y: {maze_size_x}\n\n")
 
-        :return next_state: next position to fly
-        """
+    i = 0
+    for row in maze_map:
+        for j, cell in enumerate(row, 0):
+            messages = []
+            if not cell.forward:
+                messages.append(f"{j + i*4 + 1}-{j + (i+1)*4 + 1}")
+            if not cell.right:
+                messages.append(f"{j + i*4 + 1}-{j + 1 + i*4 + 1}")
+            if not cell.back:
+                messages.append(f"{j + i*4 + 1}-{j + (i-1)*4 + 1}")
+            if not cell.left:
+                messages.append(f"{j + i*4 + 1}-{j - 1 + i*4 + 1}")
 
-        if not forward:
-            if right:
-                return "move forward"
-            else:
-                return "rotate right"
-        else:
-            return "rotate left"
-        
+            for i, message in enumerate(messages, 0):
+                if i != len(messages) - 1:
+                    print(message, end="; ")
+                else:
+                    print(message, end="")
+
+            print("\n")
+
+        i += 1
+
+if __name__ == "__main__":
+    maze_map = [
+        [Cell([True, False, True, True]), Cell([False, False, True, False]), Cell([True, False, True, False]), Cell([False, True, True, False])],
+        [Cell([False, False, True, True]), Cell([True, True, False, False]), Cell([True, False, True, True]), Cell([True, True, False, False])],
+        [Cell([True, False, False, True]), Cell([False, True, True, False]), Cell([True, False, True, True]), Cell([False, True, True, False])],
+        [Cell([True, False, True, True]), Cell([True, False, False, False]), Cell([True, False, True, False]), Cell([True, True, False, False])]
+    ]
+    print_maze_map(maze_map)
+
