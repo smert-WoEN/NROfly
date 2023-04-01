@@ -90,6 +90,19 @@ def check_left_wall(dist=1.0):
     return get_left_range() < dist
 
 
+def get_image():
+    return bridge.imgmsg_to_cv2(rospy.wait_for_message('main_camera/image_raw', Image), 'bgr8')
+
+
+def read_qr(image):
+    data = pyzbar.decode(image)
+    return data
+
+
+def data0_from_qr_data(data):
+    return data[0].data.decode("utf-8")
+
+
 def move(dir, x_, y_, z_, yaw_):
     if dir == 0:
         x_ += STEP_X
